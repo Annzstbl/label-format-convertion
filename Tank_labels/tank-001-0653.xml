@@ -1,0 +1,26 @@
+<annotation>
+	<folder>images</folder>
+	<filename>tank-00000576.jpg</filename>
+	<path>G:\dataset\tank\4\images\tank-00000576.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>1024</width>
+		<height>1024</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>tank</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>366</xmin>
+			<ymin>470</ymin>
+			<xmax>492</xmax>
+			<ymax>531</ymax>
+		</bndbox>
+	</object>
+</annotation>
