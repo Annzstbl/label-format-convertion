@@ -15,7 +15,7 @@ label_convertion_map={'small-vehicle':'smallvehicle',
 }
 
 # 读取一个DOTA_lables格式的txt，返回list
-def read_dota_lables(path):
+def read_dota_lables(path, regular=True):
     f = open(path, 'r')
     lines = f.readlines()
     f.close()
@@ -27,7 +27,13 @@ def read_dota_lables(path):
         # 把line组成一个元组，放到out_list中
         # 0:8是目标位置，8是类别
         line[8] = line[8].strip().lower()
-        line = tuple(line)
+        # line的8个元素(x1,y1, x2,y2, x3,y3, x4,y4)中挑出x_min,x_max,y_min,y_max
+        # 之后按照左上，右上，右下，左下的顺序排列
+        x_min = min(float(line[0]), float(line[2]), float(line[4]), float(line[6]))
+        x_max = max(float(line[0]), float(line[2]), float(line[4]), float(line[6]))
+        y_min = min(float(line[1]), float(line[3]), float(line[5]), float(line[7]))
+        y_max = max(float(line[1]), float(line[3]), float(line[5]), float(line[7]))
+        line = (str(x_min), str(y_min), str(x_max), str(y_min), str(x_max), str(y_max), str(x_min), str(y_max), line[8])
         out_list.append(line)
     # 获得path的simple name
     img_id = path.split('/')[-1].replace('txt','png')
