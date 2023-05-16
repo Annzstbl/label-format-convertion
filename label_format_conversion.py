@@ -43,7 +43,6 @@ def read_dota_lables(path, regular=True):
 def read_tank_labels(path):
     tree = ET.parse(path)
     root = tree.getroot()
-    filename = root.find('filename').text
     out_list = []
     for object in root.findall('object'):
         cls_name = object.find('name').text.strip().lower()
@@ -55,8 +54,10 @@ def read_tank_labels(path):
         ymax = (float(xml_box.find('ymax').text) - 1)    
         # 把line组成一个元组，放到out_list中
         line = (str(xmin), str(ymin), str(xmax), str(ymin), str(xmax), str(ymax), str(xmin), str(ymax), cls_name)
+
         out_list.append(line)
-    return out_list, filename
+    img_id = path.split('/')[-1].replace('xml','jpg')
+    return out_list, img_id
 
         
 
