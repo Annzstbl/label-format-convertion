@@ -8,14 +8,16 @@ import xml.etree.cElementTree as ET
 
 
 # 从原label转为新label的map
+# 不在次行列的类别将被忽略
 label_convertion_map={'small-vehicle':'smallvehicle',
                       'plane':'plane',
                       'tank':'tank',
                       'helicopter':'helicopter',
+                      'bridge':'bridge'
 }
 
 # 读取一个DOTA_lables格式的txt，返回list
-def read_dota_lables(path, regular=True):
+def read_dota_lables(path):
     f = open(path, 'r')
     lines = f.readlines()
     f.close()
@@ -59,10 +61,44 @@ def read_tank_labels(path):
     img_id = path.split('/')[-1].replace('xml','jpg')
     return out_list, img_id
 
-        
+# 解析fair1m数据集的xml文件，返回list
+def read_fair1m_lables(path):
+    tree = ET.parse(path)
+    root = tree.getroot()
+    out_list = []
+    objects = root.find('objects')
+    for object in objects.findall('object'):
+        cls_name = object.find('possibleresult').find('name').text.strip().lower()
+        # 标注框位置
+        xml_boxs = object.find('points')
+        xmin = None
+        ymin = None
+        xmax = None
+        ymax = None
+        for xmlbox in xml_boxs.findall('point'):
+            point = xmlbox.text
+            x, y = point.split(',')
+            x = float(x)
+            y = float(y)
+            if xmin is None:
+                xmin = x
+                ymin = y
+                xmax = x
+                ymax = y
+            else:
+                xmin = min(xmin, x)
+                ymin = min(ymin, y)
+                xmax = max(xmax, x)
+                ymax = max(ymax, y)
+        # 把line组成一个元组，放到out_list中
+        line = (str(xmin), str(ymin), str(xmax), str(ymin), str(xmax), str(ymax), str(xmin), str(ymax), cls_name)
+
+        out_list.append(line)
+    img_id = path.split('/')[-1].replace('xml','tif')
+    return out_list, img_id
 
 # main
-if __name__ == '__main__':
+def main_conversion():
     # "/home/lth/207_lable/label_format_conversion/DOTA_labels"
     # csv文件
     csv_file = 'new_label.csv'
@@ -78,6 +114,10 @@ if __name__ == '__main__':
     tank_path = 'Tank_labels/'
     tank_files = os.listdir(tank_path)
     tank_files.sort()
+    # fair1m_lables
+    fair1m_path = 'FAIR1M_labels/'
+    fair1m_files = os.listdir(fair1m_path)
+    fair1m_files.sort()
 
     
     # 确认csv文件是否存在
@@ -151,6 +191,36 @@ if __name__ == '__main__':
         if(id == old_id):
             invalid_image.append(image_id)    
     
+    for data_num, fair1m_file in enumerate(fair1m_files):
+        # 打印进度
+        print('[%d/%d], 正在处理fair1m labels %s' % (data_num+1, len(fair1m_files), fair1m_file))
+        # 读取DOTA_lables格式的txt，返回一个list
+        object_list, image_id = read_fair1m_lables(fair1m_path + fair1m_file)
+        old_id = id
+        # 逐个目标转换
+        for fair1m_object in object_list:
+            # 标注框位置
+            geometry = fair1m_object[0:8]
+            # 类别
+            class_ = fair1m_object[8]
+            # 转换类别
+            if class_ in label_convertion_map:
+                class_ = label_convertion_map[class_]
+                # 写入csv文件
+                # 示例
+                # 1,4f833867-273e-4d73-8bc3-cb2d9ceb54ef.jpg,"[(135, 522), (245, 522), (245, 600), (135, 600)]",Airplane
+                line = str(id) + ',' + image_id + ',"[' + \
+                    "(" + geometry[0] + ',' + geometry[1] + '),' + \
+                    "(" + geometry[2] + ',' + geometry[3] + '),' + \
+                    "(" + geometry[4] + ',' + geometry[5] + '),' + \
+                    "(" + geometry[6] + ',' + geometry[7] + ')' + \
+                    ']",' + class_ + '\n'
+                f_csv.write(line)
+                id = id + 1
+        #没有任何有效目标的图像
+        if(id == old_id):
+            invalid_image.append(image_id)    
+ 
     # 关闭csv文件
     f_csv.close()
     print('转换完成')
@@ -163,3 +233,28 @@ if __name__ == '__main__':
     # 把无效图像名字写入txt文件
     with open(invalid_file, 'w') as f:
         f.write(str(invalid_image))
+
+def show_label():
+    # fair1m_lables
+    fair1m_path = 'FAIR1M_labels/'
+    fair1m_files = os.listdir(fair1m_path)
+    fair1m_files.sort()
+    # 创建一个class的集合
+    class_set = set()
+    for data_num, fair1m_file in enumerate(fair1m_files):
+        # 打印进度
+        print('[%d/%d], 正在处理fair1m labels %s' % (data_num+1, len(fair1m_files), fair1m_file))
+        # 读取DOTA_lables格式的txt，返回一个list
+        object_list, image_id = read_fair1m_lables(fair1m_path + fair1m_file)
+        old_id = id
+        # 逐个目标转换
+        for fair1m_object in object_list:
+            class_ = fair1m_object[8]
+            print(class_)
+            class_set.add(class_)
+    # 输出class_set
+    print(class_set)
+
+if __name__ == '__main__':
+    main_conversion()
+    # show_label()
