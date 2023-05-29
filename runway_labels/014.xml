@@ -1,0 +1,26 @@
+<annotation>
+	<folder>机场跑道</folder>
+	<filename>014.png</filename>
+	<path>C:\Users\HaHa\Desktop\数据标注\机场跑道\014.png</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>2200</width>
+		<height>565</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Airport runway</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>277</xmin>
+			<ymin>482</ymin>
+			<xmax>899</xmax>
+			<ymax>534</ymax>
+		</bndbox>
+	</object>
+</annotation>
