@@ -16,6 +16,7 @@ label_convertion_map={'small-vehicle':'smallvehicle',
                       'bridge':'bridge',
                       'airport runway':'airportrunway',
                       'airportrunway':'airportrunway',
+                      'runway':'runway'
 }
 
 # 读取一个DOTA_lables格式的txt，返回list
@@ -181,6 +182,8 @@ def main_conversion():
     runway_path = 'runway_labels/'
     # runway small label
     runway_small_path = 'runway_smalllabel/'
+    # 0608-labels
+    runway_0608_path = '0608-labels/'
 
     instance_num = 1
     invalid_image = []
@@ -201,6 +204,10 @@ def main_conversion():
     instance_num, tmp_invalid_image = conversion(runway_small_path, csv_file, read_runway_labels, instance_num, True)
     invalid_image.extend(tmp_invalid_image)
 
+    csv_file = '0608_labels.csv'
+    instance_num = 1
+    instance_num, tmp_invalid_image = conversion(runway_0608_path, csv_file, read_runway_labels, instance_num, True)
+    invalid_image.extend(tmp_invalid_image)
 
     print('转换完成')
     # 目标数量

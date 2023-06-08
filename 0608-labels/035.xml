@@ -1,0 +1,26 @@
+<annotation>
+	<folder>0606</folder>
+	<filename>035.png</filename>
+	<path>C:\Users\HaHa\Desktop\0511_数据筛选\0606\035.png</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>1993</width>
+		<height>1082</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>runway</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>1004</xmin>
+			<ymin>621</ymin>
+			<xmax>1381</xmax>
+			<ymax>708</ymax>
+		</bndbox>
+	</object>
+</annotation>
